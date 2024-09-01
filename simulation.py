@@ -1,10 +1,10 @@
 import math
-import neat
-import numpy as np
-import pickle
-import pygame
 import random
 import sys
+import os
+import pickle
+import neat
+import pygame
 
 WIDTH = 1366
 HEIGHT = 768
@@ -147,7 +147,7 @@ def run_simulation(genomes, config):
     global current_generation
     current_generation += 1
     counter = 0
-
+    terminate_simulation = False
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -160,12 +160,12 @@ def run_simulation(genomes, config):
                 if car.speed > 4:
                     car.angle += 1.3
                 else:
-                    car.angle += 2.5
+                    car.angle += 2.6
             elif choice == 1:
                 if car.speed > 4:
                     car.angle -= 1.3
                 else:
-                    car.angle -= 2.5 
+                    car.angle -= 2.6 
             elif choice == 2:
                 if (car.speed > 3):
                     car.speed -= 0.1
@@ -177,26 +177,24 @@ def run_simulation(genomes, config):
                 
             
         still_alive = 0
-        global terminate_simulation
         global f
         for i, car in enumerate(cars):
-            terminate_simulation = False
+            
             f = 0
             if car.is_alive():
                 still_alive += 1
                 car.update(game_map)
                 genomes[i][1].fitness += car.get_reward()
-                '''car_x, car_y = car.position[0], car.position[1]
+                car_x, car_y = car.position[0], car.position[1]
                 coord = s_coord[track_name]
                 distance = math.sqrt((car_x - coord._x) ** 2 + (car_y - coord._y) ** 2)
-                if f == 1 and distance <= tolerance: 
+                if car.distance > 100 and distance <= tolerance: 
                     genomes[i][1].fitness += 1000
                     terminate_simulation = True
-                    break
-                elif car_x > coord._x and abs(car_y - coord._y) <= tolerance:
-                    f = 1'''
+                
                 
         if terminate_simulation:
+            print("Goal achieved")
             break
 
         if still_alive == 0:
@@ -247,6 +245,6 @@ if __name__ == "__main__":
     stats = neat.StatisticsReporter()
     population.add_reporter(stats)
     
-    population.run(run_simulation, 40)
+    population.run(run_simulation, 45)
     with open(t_name + '_neat_population.pkl', 'wb') as f:
         pickle.dump(population, f)
