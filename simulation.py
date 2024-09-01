@@ -1,10 +1,10 @@
 import math
+import neat
+import numpy as np
+import pickle
+import pygame
 import random
 import sys
-import os
-import pickle
-import neat
-import pygame
 
 WIDTH = 1366
 HEIGHT = 768
@@ -28,10 +28,9 @@ s_coord = {
     "rand_hard.png": ImmutableCoord(876, 647)
 }
 
-track_name = "rand_hard.png"
+track_name = "rand.png"
 
 class Car:
-
     def __init__(self):
         self.sprite = pygame.image.load('assets/w10_min.png').convert_alpha() # Convert Speeds Up A Lot
         self.rotated_sprite = self.sprite 
@@ -44,11 +43,12 @@ class Car:
         self.sensors = [] 
         self.alive = True 
         self.distance = 0 
+        self.f = 0
         self.time = 0 
 
     def draw(self, screen):
         screen.blit(self.rotated_sprite, self.position) 
-        self.draw_sensor(screen) 
+        #self.draw_sensor(screen) 
 
     def draw_sensor(self, screen):
         for sensor in self.sensors:
@@ -59,7 +59,6 @@ class Car:
     def check_collision(self, game_map):
         self.alive = True
         for point in self.corners:
-            
             if game_map.get_at((int(point[0]), int(point[1]))) == BORDER_COLOR:
                 self.alive = False
                 break
@@ -78,7 +77,7 @@ class Car:
     
     def update(self, game_map):
         if not self.speed_set:
-            self.speed = 6
+            self.speed = 9
             self.speed_set = True
 
         self.rotated_sprite = self.rotate_center(self.sprite, self.angle)
@@ -126,11 +125,10 @@ class Car:
         return rotated_image
     
     
-
-
 def run_simulation(genomes, config):
     nets = []
     cars = []
+    tolerance = 10
 
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -160,46 +158,60 @@ def run_simulation(genomes, config):
             choice = output.index(max(output))
             if choice == 0:
                 if car.speed > 4:
-                    car.angle += 2
+                    car.angle += 1.3
                 else:
-                    car.angle += 4
+                    car.angle += 2.5
             elif choice == 1:
                 if car.speed > 4:
-                    car.angle -= 2
+                    car.angle -= 1.3
                 else:
-                    car.angle -= 4 
+                    car.angle -= 2.5 
             elif choice == 2:
-                if (car.speed - 2 > 0):
-                    car.speed -= 2
+                if (car.speed > 3):
+                    car.speed -= 0.1
             else:
                 if car.speed >= 3 and car.speed < 6: 
-                    car.speed += 1
+                    car.speed += 0.3
                 elif car.speed < 3:
-                    car.speed += 2 
-                elif car.speed == 6:
-                    car.speed = 6
+                    car.speed += 0.2
+                
             
         still_alive = 0
+        global terminate_simulation
+        global f
         for i, car in enumerate(cars):
+            terminate_simulation = False
+            f = 0
             if car.is_alive():
                 still_alive += 1
                 car.update(game_map)
                 genomes[i][1].fitness += car.get_reward()
+                '''car_x, car_y = car.position[0], car.position[1]
+                coord = s_coord[track_name]
+                distance = math.sqrt((car_x - coord._x) ** 2 + (car_y - coord._y) ** 2)
+                if f == 1 and distance <= tolerance: 
+                    genomes[i][1].fitness += 1000
+                    terminate_simulation = True
+                    break
+                elif car_x > coord._x and abs(car_y - coord._y) <= tolerance:
+                    f = 1'''
                 
+        if terminate_simulation:
+            break
 
         if still_alive == 0:
             break
 
-        counter += 1
-        #if counter == 30 * 60: 
-            #break
+        '''counter += 1
+        if counter == 30 * 50: 
+            break'''
 
         screen.blit(game_map, (0, 0))
         for car in cars:
             if car.is_alive():
                 car.draw(screen)
         
-        text = generation_font.render("Generation: " + str(current_generation), True, (0,0,0))
+        '''text = generation_font.render("Generation: " + str(current_generation), True, (0,0,0))
         text_rect = text.get_rect()
         text_rect.center = (900, 450)
         screen.blit(text, text_rect)
@@ -207,7 +219,7 @@ def run_simulation(genomes, config):
         text = alive_font.render("Still Alive: " + str(still_alive), True, (0, 0, 0))
         text_rect = text.get_rect()
         text_rect.center = (900, 490)
-        screen.blit(text, text_rect)
+        screen.blit(text, text_rect)'''
 
         pygame.display.flip()
         clock.tick(60) # 60 FPS
@@ -223,17 +235,18 @@ if __name__ == "__main__":
                                 config_path)
 
     try:
-        with open('neat_population.pkl', 'rb') as f:
+        t_name = track_name[:len(track_name)-4]
+        with open(t_name + '_neat_population.pkl', 'rb') as f:
             population = pickle.load(f)
         print("Loaded population from file")
     except:
         print("Starting simulation from scratch...")
+        population = neat.Population(config)
         
-    population = neat.Population(config)    
     population.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     population.add_reporter(stats)
     
-    population.run(run_simulation, 400)
-    with open('neat_population.pkl', 'wb') as f:
+    population.run(run_simulation, 40)
+    with open(t_name + '_neat_population.pkl', 'wb') as f:
         pickle.dump(population, f)
