@@ -28,7 +28,7 @@ s_coord = {
     "rand_hard.png": ImmutableCoord(876, 647)
 }
 
-track_name = "rand.png"
+track_name = "rand_hard.png"
 
 class Car:
     def __init__(self):
@@ -158,22 +158,22 @@ def run_simulation(genomes, config):
             choice = output.index(max(output))
             if choice == 0:
                 if car.speed > 4:
-                    car.angle += 1.3
+                    car.angle += 2
                 else:
-                    car.angle += 2.6
+                    car.angle += 4
             elif choice == 1:
                 if car.speed > 4:
-                    car.angle -= 1.3
+                    car.angle -= 2
                 else:
-                    car.angle -= 2.6 
+                    car.angle -= 4
             elif choice == 2:
-                if (car.speed > 3):
+                if (car.speed > 2.5):
                     car.speed -= 0.1
             else:
                 if car.speed >= 3 and car.speed < 6: 
-                    car.speed += 0.3
+                    car.speed += 0.09
                 elif car.speed < 3:
-                    car.speed += 0.2
+                    car.speed += 0.19
                 
             
         still_alive = 0
@@ -184,7 +184,10 @@ def run_simulation(genomes, config):
             if car.is_alive():
                 still_alive += 1
                 car.update(game_map)
-                genomes[i][1].fitness += car.get_reward()
+                dist_reward = car.get_reward()
+                time_penalty = car.time / 60
+                speed_penalty = max(0, 3 - car.speed) * 10
+                genomes[i][1].fitness += (dist_reward - time_penalty - speed_penalty)
                 car_x, car_y = car.position[0], car.position[1]
                 coord = s_coord[track_name]
                 distance = math.sqrt((car_x - coord._x) ** 2 + (car_y - coord._y) ** 2)
@@ -245,6 +248,6 @@ if __name__ == "__main__":
     stats = neat.StatisticsReporter()
     population.add_reporter(stats)
     
-    population.run(run_simulation, 45)
+    population.run(run_simulation, 150)
     with open(t_name + '_neat_population.pkl', 'wb') as f:
         pickle.dump(population, f)
