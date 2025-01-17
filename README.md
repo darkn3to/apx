@@ -1,1 +1,1 @@
-I built this project to explore how a Game AI can optimize its performance in a dynamic environment using neuroevolution. By applying NEAT to a 2D race track, the AI learns to navigate as quickly as possible through trial and error, adapting and improving over time. 
+
