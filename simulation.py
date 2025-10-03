@@ -124,7 +124,6 @@ class Car:
         rotated_rect = rotated_image.get_rect(center=image.get_rect(topleft=self.position).center)
         return rotated_image
     
-    
 def run_simulation(genomes, config):
     nets = []
     cars = []
@@ -175,11 +174,10 @@ def run_simulation(genomes, config):
                 elif car.speed < 3:
                     car.speed += 0.19
                 
-            
         still_alive = 0
+        
         global f
         for i, car in enumerate(cars):
-            
             f = 0
             if car.is_alive():
                 still_alive += 1
@@ -195,7 +193,6 @@ def run_simulation(genomes, config):
                     genomes[i][1].fitness += 1000
                     terminate_simulation = True
                 
-                
         if terminate_simulation:
             print("Goal achieved")
             break
@@ -203,31 +200,15 @@ def run_simulation(genomes, config):
         if still_alive == 0:
             break
 
-        '''counter += 1
-        if counter == 30 * 50: 
-            break'''
-
         screen.blit(game_map, (0, 0))
         for car in cars:
             if car.is_alive():
                 car.draw(screen)
-        
-        '''text = generation_font.render("Generation: " + str(current_generation), True, (0,0,0))
-        text_rect = text.get_rect()
-        text_rect.center = (900, 450)
-        screen.blit(text, text_rect)
-
-        text = alive_font.render("Still Alive: " + str(still_alive), True, (0, 0, 0))
-        text_rect = text.get_rect()
-        text_rect.center = (900, 490)
-        screen.blit(text, text_rect)'''
 
         pygame.display.flip()
-        clock.tick(60) # 60 FPS
+        clock.tick(60) 
 
 if __name__ == "__main__":
-    
-    # Load Config
     config_path = "neat-config.txt"
     config = neat.config.Config(neat.DefaultGenome,
                                 neat.DefaultReproduction,
