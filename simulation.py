@@ -13,19 +13,19 @@ BORDER_COLOR = (255, 255, 255, 255)
 
 current_generation = 0 
 
-class ImmutableCoord:
+class Coord:
     def __init__(self, x, y):
         self._x = x
         self._y = y
 
 s_coord = {
-    "bah.png": ImmutableCoord(806, 664),
-    "bel.png": ImmutableCoord(491, 325),
-    "ita.png": ImmutableCoord(908, 552),
-    "gbr.png": ImmutableCoord(902, 451),
-    "jpn.png": ImmutableCoord(599, 614),
-    "rand.png": ImmutableCoord(776, 604),
-    "rand_hard.png": ImmutableCoord(876, 647)
+    "bah.png": Coord(806, 664),
+    "bel.png": Coord(491, 325),
+    "ita.png": Coord(908, 552),
+    "gbr.png": Coord(902, 451),
+    "jpn.png": Coord(599, 614),
+    "rand.png": Coord(776, 604),
+    "rand_hard.png": Coord(876, 647)
 }
 
 track_name = "rand_hard.png"
