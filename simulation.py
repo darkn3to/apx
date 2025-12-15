@@ -121,7 +121,6 @@ class Car:
 
     def rotate_center(self, image, angle):
         rotated_image = pygame.transform.rotate(image, angle)
-        rotated_rect = rotated_image.get_rect(center=image.get_rect(topleft=self.position).center)
         return rotated_image
     
 def run_simulation(genomes, config):
