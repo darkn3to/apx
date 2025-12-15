@@ -32,7 +32,7 @@ track_name = "rand_hard.png"
 
 class Car:
     def __init__(self):
-        self.sprite = pygame.image.load('assets/w10_min.png').convert_alpha() # Convert Speeds Up A Lot
+        self.sprite = pygame.image.load('assets/w10_min.png').convert_alpha()
         self.rotated_sprite = self.sprite 
         coord = s_coord[track_name] 
         self.angle = 0
