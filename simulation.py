@@ -205,27 +205,26 @@ def run_simulation(genomes, config):
         pygame.display.flip()
         clock.tick(60) 
 
-if __name__ == "__main__":
-    config_path = "neat-config.txt"
-    config = neat.config.Config(neat.DefaultGenome,
-                                neat.DefaultReproduction,
-                                neat.DefaultSpeciesSet,
-                                neat.DefaultStagnation,
-                                config_path)
+config_path = "neat-config.txt"
+config = neat.config.Config(neat.DefaultGenome,
+                            neat.DefaultReproduction,
+                            neat.DefaultSpeciesSet,
+                            neat.DefaultStagnation,
+                            config_path)
 
-    try:
-        t_name = track_name[:len(track_name)-4]
-        with open(t_name + '_neat_population.pkl', 'rb') as f:
-            population = pickle.load(f)
-        print("Loaded population from file")
-    except:
-        print("Starting simulation from scratch...")
-        population = neat.Population(config)
+try:
+    t_name = track_name[:len(track_name)-4]
+    with open(t_name + '_neat_population.pkl', 'rb') as f:
+        population = pickle.load(f)
+    print("Loaded population from file")
+except:
+    print("Starting simulation from scratch...")
+    population = neat.Population(config)
         
-    population.add_reporter(neat.StdOutReporter(True))
-    stats = neat.StatisticsReporter()
-    population.add_reporter(stats)
+population.add_reporter(neat.StdOutReporter(True))
+stats = neat.StatisticsReporter()
+population.add_reporter(stats)
     
-    population.run(run_simulation, 150)
-    with open(t_name + '_neat_population.pkl', 'wb') as f:
-        pickle.dump(population, f)
+population.run(run_simulation, 150)
+with open(t_name + '_neat_population.pkl', 'wb') as f:
+    pickle.dump(population, f)
