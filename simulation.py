@@ -138,8 +138,6 @@ def run_simulation(genomes, config):
         cars.append(Car())
 
     clock = pygame.time.Clock()
-    generation_font = pygame.font.SysFont("Arial", 30)
-    alive_font = pygame.font.SysFont("Arial", 20)
     game_map = pygame.image.load('assets/' + track_name).convert() 
 
     global current_generation
